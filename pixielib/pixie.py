@@ -13,6 +13,7 @@
 # For comments or questions, please email us at pixie@tue.mpg.de
 # For commercial licensing contact, please contact ps-license@tuebingen.mpg.de
 
+import pickle
 import os, sys
 import torch
 import torchvision
@@ -368,7 +369,7 @@ class PIXIE(object):
 
         return param_dict
     
-    def decode(self, param_dict, param_type):
+    def decode(self, param_dict, param_type, get_pixie_dict=False):
         ''' Decode model parameters to smplx vertices & joints & texture
         Args:
             param_dict: smplx parameters
@@ -420,6 +421,18 @@ class PIXIE(object):
             left_hand_pose=param_dict['left_hand_pose'],
             right_hand_pose=param_dict['right_hand_pose'])
         smplx_kpt3d = joints.clone()
+
+        # Save parameters 
+        if get_pixie_dict:
+            nh_param_dict = {}
+            nh_param_dict["shape"] = param_dict["shape"]
+            nh_param_dict["exp"] = param_dict["exp"]
+            nh_param_dict["global_pose"] = param_dict["global_pose"]
+            nh_param_dict["body_pose"] = param_dict["body_pose"]
+            nh_param_dict["jaw_pose"] = param_dict["jaw_pose"]
+            nh_param_dict["left_hand_pose"] = param_dict["left_hand_pose"]
+            nh_param_dict["right_hand_pose"] = param_dict["right_hand_pose"]
+            return nh_param_dict
 
         # projection
         cam = param_dict[param_type + '_cam']
